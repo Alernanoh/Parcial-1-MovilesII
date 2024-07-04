@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+// Definición de la interfaz para la película
+interface Pelicula {
+  titulo: string;
+  image: string;
+  anio: number;
+  descripcion: string;
+}
+
 export default function ApiScreen() {
   const API_ITSQMET = "https://jritsqmet.github.io/web-api/peliculas2.json";
-  const [Data, setData] = useState(null);
+  const [data, setData] = useState<{ peliculas: Pelicula[] }>({ peliculas: [] });
 
   useEffect(() => {
     fetch(API_ITSQMET)
@@ -16,11 +24,11 @@ export default function ApiScreen() {
       });
   }, []);
 
-  function mensaje(item) {
+  function mensaje(item: Pelicula) {
     Alert.alert("Descripción", "Acerca de esto: " + item.descripcion);
   }
 
-  if (!Data) {
+  if (data.peliculas.length === 0) {
     return (
       <View style={styles.container}>
         <Text>Cargando...</Text>
@@ -32,7 +40,7 @@ export default function ApiScreen() {
     <View style={styles.container}>
       <Text style={styles.text_title}>ITSQMET</Text>
       <FlatList
-        data={Data.peliculas} // Accedemos al array de películas
+        data={data.peliculas}
         renderItem={({ item }) =>
           <TouchableOpacity style={styles.btn} onPress={() => mensaje(item)}>
             <Text style={styles.text_title}>Nombre:</Text>
@@ -43,7 +51,7 @@ export default function ApiScreen() {
             <Text style={styles.text}>{item.anio}</Text>
           </TouchableOpacity>
         }
-        keyExtractor={(item, index) => index.toString()} // Usamos el índice como key
+        keyExtractor={(item, index) => index.toString()}
       />
     </View>
   );
